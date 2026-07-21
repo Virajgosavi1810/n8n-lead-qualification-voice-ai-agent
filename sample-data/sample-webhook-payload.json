@@ -1,0 +1,9 @@
+{
+  "call_status": "completed",
+  "duration": 312,
+  "transcript": "Customer is interested in implementing an AI voice agent for qualifying inbound leads within the next month.",
+  "summary": "Qualified lead interested in AI automation.",
+  "lead_score": 92,
+  "qualified": true,
+  "next_action": "Schedule product demonstration"
+}
