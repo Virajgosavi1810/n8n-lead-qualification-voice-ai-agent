@@ -1,0 +1,4 @@
+Lead ID,Name,Phone,Email,Company,Inquiry,Call Status,Summary,Interest,Budget,Timeline,Lead Score,Qualified,Next Action
+1001,John Carter,+1-555-123-4567,john@example.com,TechNova,AI Automation,Completed,Interested in workflow automation for sales.,High,"$10,000",Within 1 Month,92,Yes,Schedule Demo
+1002,Sarah Lee,+1-555-234-5678,sarah@example.com,FutureSoft,CRM Integration,Completed,Needs CRM integration with AI lead qualification.,Medium,"$5,000",2 Months,81,Yes,Follow-up Call
+1003,David Miller,+1-555-345-6789,david@example.com,Retail Hub,Voice AI,Pending,,,,,No,Awaiting Call,
