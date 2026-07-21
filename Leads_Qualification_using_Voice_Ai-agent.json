@@ -1,0 +1,461 @@
+{
+  "name": "Leads Qualification using Voice Ai-agent",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Call lead on Form Submission \n",
+        "height": 320,
+        "width": 660
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1056,
+        -144
+      ],
+      "typeVersion": 1,
+      "id": "a07417b9-219a-4f8e-9831-d9aef2a19603",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "formTitle": "Customer Inquiry",
+        "formDescription": "Please provide your contact details and the AI service you're looking for.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "placeholder": "Jane Smith",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "email",
+              "fieldType": "email",
+              "placeholder": "janesmith@gmail.com",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Phone Number",
+              "fieldType": "number",
+              "placeholder": "+911512253396",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Budget",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "$1000 to $4000"
+                  },
+                  {
+                    "option": "$4000 to $8000"
+                  },
+                  {
+                    "option": "$8000 to $16000"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Service",
+              "fieldType": "textarea",
+              "placeholder": "Please describe your service that you're looking for to implement  in your business in as much detail as possible."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -1024,
+        -48
+      ],
+      "id": "3301ee28-9e52-4699-96ac-79c77bcc0ea9",
+      "name": "On form submission",
+      "webhookId": "96f2a17c-5647-45e4-8a5e-d20a706ed90d"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1MjOv3aZdBtX2QJQZH54PO76pjPk776Ce90jD1IHAuE0",
+          "mode": "list",
+          "cachedResultName": "Leads Qualification",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MjOv3aZdBtX2QJQZH54PO76pjPk776Ce90jD1IHAuE0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MjOv3aZdBtX2QJQZH54PO76pjPk776Ce90jD1IHAuE0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Phone Number": "{{ $('On Form submission').item.json['Phone Number '] }}",
+            "Name": "{{ $('On Form submission').item.json['Name '] }}",
+            "Email": "{{ $('On Form submission').item.json['Email '] }}",
+            "Budget": "{{ $('On Form submission').item.json['Budget '] }}"
+          },
+          "matchingColumns": [
+            "Phone Number"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AI Phone Summary",
+              "displayName": "AI Phone Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -576,
+        -48
+      ],
+      "id": "6384efe3-452a-49ea-b539-53c4c61df116",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jZnh1sek0aDJgXgc",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.retellai.com/v2/create-phone-call",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"from_number\":\"+1 (541) 534-0942\",\n    \"to_number\": \"{{ $json['Phone Number ']}}\",\n    \"retell_llm_dynamic_variables\": {\n      \"name\": \"{{ $json['Name ']}}\",\n      \"phone_number\": \"{{ $json ['Phone Number ']}}\",\n      \"email\": \"{{ $json['Email '] }}\",\n      \"service\": \"{{ $json['AI service you're interested in. '] }}\",\n      \"budget\": \"{{ $json['Budget ']}}\"  \n    },\n    \"override_agent_id\": \"agent_f5a0a7a6e703cd59a4f9114bc5\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -800,
+        -48
+      ],
+      "id": "a195f9cd-e4c4-4a5b-941c-02c8a81f5e76",
+      "name": "Re_tell",
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "WZ8aa7xolAOn9ts5",
+          "name": "Retell-AI-Remainder"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Update Lead Info \n",
+        "height": 500,
+        "width": 760
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -288,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "d7d16a17-0cb0-40ed-b0d1-3bf28f0d7423",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        -48
+      ],
+      "id": "d99c31f6-aceb-4fe2-9903-afe6f9ca2e87",
+      "name": "Webhook",
+      "webhookId": "6d2b62a9-8d46-4043-8cc2-fec16a43d355"
+    },
+    {
+      "parameters": {
+        "options": {
+          "summarizationMethodAndPrompts": {
+            "values": {
+              "combineMapPrompt": "Write a concise summary of the following:\n\n\n\"{{ $json.body.call.transcript }}\"\n",
+              "prompt": "Write a concise summary of the following:\n\n\n\"{{ $json.body.call.transcript }}\""
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainSummarization",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        -48
+      ],
+      "id": "7bbf2c32-8555-4438-9a40-16d65e2ecd47",
+      "name": "Summarization Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        48,
+        128
+      ],
+      "id": "400a5b08-7d51-46db-96e7-02ef7ead1472",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "1VMKjiSJqADW5yc4",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1MjOv3aZdBtX2QJQZH54PO76pjPk776Ce90jD1IHAuE0",
+          "mode": "list",
+          "cachedResultName": "Leads Qualification",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MjOv3aZdBtX2QJQZH54PO76pjPk776Ce90jD1IHAuE0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MjOv3aZdBtX2QJQZH54PO76pjPk776Ce90jD1IHAuE0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Phone Number": "{{ $('Webhook1').item.json.body.call.retell_llm_dynamic_variables.phone_number }}",
+            "AI Phone Summary": "{{ $json.response.text }}"
+          },
+          "matchingColumns": [
+            "Phone Number"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AI Phone Summary",
+              "displayName": "AI Phone Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        272,
+        -48
+      ],
+      "id": "e85380cd-b61f-4810-af36-2fc9c0556b3e",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jZnh1sek0aDJgXgc",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Re_tell",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Re_tell": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Summarization Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarization Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarization Chain": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "7786cdaf-18f6-4ed6-bd21-a63a7a53d41a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3f21aaf8491157c44331f10f943768229b6695aa90fd86fc40ddb60f0a283c31"
+  },
+  "nodeGroups": [],
+  "id": "IUK4gSttA5It3Wn0",
+  "tags": [
+    {
+      "updatedAt": "2025-06-05T06:58:59.412Z",
+      "createdAt": "2025-06-05T06:58:59.412Z",
+      "id": "Ba1Vyb7BJb8L5WK7",
+      "name": "ET"
+    },
+    {
+      "updatedAt": "2025-06-05T06:58:59.444Z",
+      "createdAt": "2025-06-05T06:58:59.444Z",
+      "id": "IkoJWBxO2KOLpNNX",
+      "name": "From POC sheet"
+    },
+    {
+      "updatedAt": "2025-06-05T14:18:39.974Z",
+      "createdAt": "2025-06-05T14:18:39.974Z",
+      "id": "hJbnykuhbMGxOCdR",
+      "name": "Cr Remains"
+    }
+  ]
+}
